@@ -2,6 +2,11 @@
 #include <vector>
 using namespace std;
 
+/*
+	Test your implementations
+	If you can, test other features as well
+*/
+
 class HeapNode {
 	int value; //data in node
 	bool marked; // flag to check if a node has had children removed
@@ -84,6 +89,8 @@ public:
 		return min->getValue();
 	}
 	
+	// TODO - Delete Min
+	// Div
 	// Delete the node with the minimum value and reorganize Fib Heap
 	void deleteMin(void){ // TODO
 		// Connect the children
@@ -100,10 +107,12 @@ public:
 	}
 	
 	// TODO - Decrease Key
+	// Jack
 	// Decrease the key of a node and change tree if needed
 	
 	
 	// TODO - Merge
+	// Maybe done - Drew
 	// Merge two Fib Heaps
 	
 	
@@ -130,10 +139,6 @@ public:
 
 int main(void){
 	Heap heap;
-	//cout << heap.isEmpty();
-	heap.insert(HeapNode(1));
-	heap.insert(HeapNode(3));
-	heap.insert(HeapNode(2));
 	while (heap.getHead() != nullptr){
 		cout << heap.getHead()->getValue() << endl;
 		heap.updateHead(heap.getHead()->getNext());
