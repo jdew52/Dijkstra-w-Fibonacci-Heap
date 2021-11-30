@@ -56,30 +56,31 @@ public:
 */
 class Heap {
 	HeapNode *min; // min functions as the root node of the Fibonacci Heap
-	HeapNode *head; // Head of list of heaps
 
 public:
 	Heap(void){ // Constructor
 		min = nullptr; // Heap starts out empty
 	}
-	
+
 	// Check if the Fib Heap is empty or not
 	bool isEmpty(void){ // Check if heap is empty
 		return min == nullptr; 
 	}
-	
+
 	// Insert a node into the Fib Heap
 	// Node inserted will be a new root in the list of roots
-	void insert(HeapNode node){ // Insert a node into the heap
+	void insert(HeapNode *node){ // Insert a node into the heap
 		if (isEmpty()){
-			min = &node;
-			head = &node;
+			node->setNext(node);
+			node->setPrev(node);
+			min = node;
 		} else {
-			node.setNext(head);
-			head->setPrev(&node);
-			head = &node;
-			if (node.getValue() < min->getValue()){
-				min = &node;
+			node->setNext(min->getNext());
+			node->setPrev(min);
+			node->getNext()->setPrev(node);
+			min->setNext(node);
+			if (node->getValue() < min->getValue()){
+				min = node;
 			}
 		}
 	}
@@ -121,27 +122,24 @@ public:
 		return min;
 	}
 	
-	// Getter for head node
-	HeapNode * getHead(){
-		return head;
-	}
-	
 	// Update the minimum node in the tree to a new node
 	void updateMin(HeapNode *newMin){
 		min = newMin;
 	}
-	
-	// Update the head node in Fib Heap to a new node
-	void updateHead(HeapNode *newHead){
-		head = newHead;
-	}
 };
 
 int main(void){
-	Heap heap;
-	while (heap.getHead() != nullptr){
-		cout << heap.getHead()->getValue() << endl;
-		heap.updateHead(heap.getHead()->getNext());
+	//Little test for insert
+	Heap* heap = new Heap();
+	heap->insert(new HeapNode(5));
+	heap->insert(new HeapNode(3));
+	heap->insert(new HeapNode(2));
+	heap->insert(new HeapNode(4));
+	heap->insert(new HeapNode(1));
+	HeapNode *trav = heap->getMin();
+	for (int i = 0; i < 10; i++){
+		printf("%d\n", trav->getValue());
+		trav = trav->getNext();
 	}
 	return 0;
 }
