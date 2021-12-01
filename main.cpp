@@ -7,11 +7,19 @@ int main(int argc, char* argv[]) {
     cout << "---------------- Testing Merge Operation ----------------" << endl;
     Heap* heap1 = Heap::generateHeap(5);
     Heap* heap2 = Heap::generateHeap(5);
+    Heap* heap3 = Heap::generateHeap(3);
+    heap1->insert(new HeapNode(1));
+    
     heap1->displayRoots();
     heap2->displayRoots();
+    heap3->displayRoots();
 
-    // TODO: Finish merge implementation
+    // Merging heap 1 and 2
     Heap* mergeHeap = Heap::merge(heap1, heap2);
+    mergeHeap->displayRoots();
+
+    // Merging new heap and heap 3
+    mergeHeap = Heap::merge(mergeHeap, heap3);
     mergeHeap->displayRoots();
 
     cout << "---------------- Testing Graph Generation ----------------" << endl;

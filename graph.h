@@ -9,8 +9,7 @@ using namespace std;
 struct Node {
     static const int inf = 10000000;
     // Default constructor
-    Node() : visited('F'), distance(inf) {
-    }
+    Node() : visited('F'), distance(inf) {}
     char visited;   // Keeps track if node has been visited (T), not visited and not in queue (F), or not visited and in queue (Q)
     int distance;   // Distance from source node
 };

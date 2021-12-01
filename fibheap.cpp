@@ -56,23 +56,25 @@ Heap::~Heap() {
     this->min = nullptr;
 }
 
-// TODO: Merge two Fib Heaps
+
 Heap* Heap::merge(Heap* a, Heap* b) {
     Heap* newHeap = new Heap;
     HeapNode* a_min = a->getMin();
     HeapNode* b_min = b->getMin();
 
-    if (a_min->getValue() < b_min->getValue()){
+    if (a_min->getValue() < b_min->getValue()) {
         // Set new min of combined heap and make it the head
         newHeap->updateMin(a_min);
-    } else{
+    } else {
         // Set new min of combined heap and make it the head
         newHeap->updateMin(b_min);
     }
     // Concatenate root lists
-    // b_min->getNext()->setNext(a_min->getNext());
-    // a_min->getNext()->setPrev(b_min->getNext());
-    // a_min->setNext(b_min);
+    HeapNode* temp = a_min->getPrev();
+    a_min->getPrev()->setNext(b_min);
+    a_min->setPrev(b_min->getPrev());
+    b_min->getPrev()->setNext(a_min);
+    b_min->setPrev(temp);
 
     // Cleanup memory associated with previous heaps.
     delete a;
