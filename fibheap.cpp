@@ -66,7 +66,6 @@ public:
   // Destructor
   ~Heap(){
         this->min = nullptr;
-        this->head = nullptr;
     }
 	// Check if the Fib Heap is empty or not
 	bool isEmpty(){ // Check if heap is empty
@@ -129,18 +128,20 @@ public:
   // Function to display roots of the heap
   void displayRoots()
   {
-      HeapNode* temp = this->getHead();
+      HeapNode* temp = this->getMin();
       if (this->isEmpty())
           cout << "\nThe heap is empty" << endl;
       else {
           cout << "\nThe root nodes of heap are: " << endl;
-          do {
+          cout << temp->getValue() << "-->";
+	      temp = temp->getNext();
+	  do {
               cout << temp->getValue();
               temp = temp->getNext();
               if (temp != nullptr) {
                     cout << "-->";
                 }
-            } while (temp != nullptr);
+            } while (temp != min);
             cout << endl;
         }
     }
@@ -156,11 +157,9 @@ Heap* merge(Heap* a, Heap* b){
     if (a_min->getValue() < b_min->getValue()){
         // Set new min of combined heap and make it the head
         newHeap->updateMin(a_min);
-        newHeap->updateHead(a_min);
     } else{
         // Set new min of combined heap and make it the head
         newHeap->updateMin(b_min);
-        newHeap->updateHead(b_min);
     }
     // Concatenate root lists
     // b_min->getNext()->setNext(a_min->getNext());
