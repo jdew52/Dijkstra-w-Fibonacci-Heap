@@ -22,9 +22,17 @@ int main(int argc, char* argv[]) {
     mergeHeap = Heap::merge(mergeHeap, heap3);
     mergeHeap->displayRoots();
 
-    // TODO: Test deleteMin here
-    // mergeHeap->deleteMin();
-    // mergeHeap->displayRoots();
+    cout << "---------------- Testing deleteMin ----------------" << endl;
+    // Test deletion of all nodes
+    for (int i = 0; i < 14; i++) {
+        cout << "Delete count " << i+1 << endl;
+        mergeHeap->deleteMin();
+        if (mergeHeap->getMin() != nullptr) {
+            cout << "New min: " << mergeHeap->getMin()->getValue() << endl;
+        }
+        mergeHeap->displayRoots();
+    }
+    // TODO: Test deleteMin with heap that contains children
 
     cout << "---------------- Testing Graph Generation ----------------" << endl;
     // Generate worst cast graph of size N

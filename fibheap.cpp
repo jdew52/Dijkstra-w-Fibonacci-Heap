@@ -128,74 +128,81 @@ int Heap::findMin() {
 void Heap::deleteMin() { // TODO
 	// Connect the children
 	HeapNode *temp = this->min->getPrev();
-	int count = 0;
+    if (this->getMin() == temp) {  // Only 1 node left
+        this->min = nullptr;
+        this->updateMin(nullptr);
+        return;
+    }
+
+	int minChildCount = 0;
 	for (auto it = this->min->getChildren().begin();
               it != this->min->getChildren().end(); it++) {
 		// cout << (*it)->getValue() << endl;
 		(*it)->setPrev(temp);
 		temp->setNext(*it);
 		temp = (*it);
-		count++;
+		minChildCount++;
 	}
 	temp->setNext(this->min->getNext());
 	temp->getNext()->setPrev(temp);
-	// Get rid of A and
 
 	this->updateMin(temp);
-	int minVal = this->min->getValue();
-	HeapNode* tempMin;
+	int minVal = temp->getValue();
+	HeapNode* tempMin = temp;
 	do {
-		if (minVal < temp->getValue()) {
+		if (minVal > temp->getValue()) {
 			tempMin = temp;
+            minVal = tempMin->getValue();
 		}
 
 		temp = temp->getNext();
-
 	} while(temp != min);
 
 	this->updateMin(tempMin);
 
-	HeapNode* cons[count];
+	HeapNode* cons[minChildCount];
 	temp = this->min;
 
-	for (int i = 0; i < count; i++)
+	for (int i = 0; i < minChildCount; i++)
 	{
 		cons[i] = nullptr;
 	}
 
-	do {
-		int degree = temp->getChildren().size();
-		if (cons[degree] == nullptr) {
-			cons[degree] = temp;
-			temp = temp->getNext();
-		}
-		else {
-			cons[degree]->getNext()->setPrev(cons[degree]->getPrev());
-			cons[degree]->getPrev()->setNext(cons[degree]->getNext());
+    if (minChildCount != 0) {
+    	do {
+    		int degree = temp->getChildren().size();
+    		if (cons[degree] == nullptr) {
+    			cons[degree] = temp;
+    			temp = temp->getNext();
+    		}
+    		else {
+    			cons[degree]->getNext()->setPrev(cons[degree]->getPrev());
+    			cons[degree]->getPrev()->setNext(cons[degree]->getNext());
 
-			if (cons[degree]->getValue() >= temp->getValue()) {
+    			if (cons[degree]->getValue() >= temp->getValue()) {
 
-				cons[degree]->setNext(nullptr);
-				cons[degree]->setPrev(nullptr);
+    				cons[degree]->setNext(nullptr);
+    				cons[degree]->setPrev(nullptr);
 
-				temp->getChildren().push_back(cons[degree]);
-			}
-			else {
+    				temp->getChildren().push_back(cons[degree]);
+    			}
+    			else {
 
-				cons[degree]->setNext(temp->getNext());
-				cons[degree]->setPrev(temp->getPrev());
+    				cons[degree]->setNext(temp->getNext());
+    				cons[degree]->setPrev(temp->getPrev());
 
-				temp->setNext(nullptr);
-				temp->setPrev(nullptr);
+    				temp->setNext(nullptr);
+    				temp->setPrev(nullptr);
 
-				cons[degree]->getChildren().push_back(temp);
+    				cons[degree]->getChildren().push_back(temp);
 
-				temp = cons[degree];
-			}
-			cons[degree] = nullptr;
-		}
+    				temp = cons[degree];
+    			}
+    			cons[degree] = nullptr;
+    		}
 
-	} while(temp != min);
+    	} while(temp != min);
+    }
 }
 
 // TODO - Decrease Key
