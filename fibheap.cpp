@@ -14,35 +14,37 @@ class HeapNode {
 	HeapNode *parent;
 	vector<HeapNode *> children;
 public:
+    // Constructor
 	HeapNode(int newVal){
-		value = newVal;
-		prev = nullptr;
-		next = nullptr;
-		parent = nullptr;
+		this->value = newVal;
+		this->prev = nullptr;
+		this->next = nullptr;
+		this->parent = nullptr;
 	}
+
 	int getValue(){
-		return value;
+		return this->value;
 	}
 	HeapNode * getNext(void){
-		return next;
+		return this->next;
 	}
 	HeapNode * getPrev(void){
-		return prev;
+		return this->prev;
 	}
 	HeapNode * getParent(void){
-		return parent;
+		return this->parent;
 	}
 	vector<HeapNode *> getChildren(void){
-		return children;
+		return this->children;
 	}
 	void setNext(HeapNode *newNode){
-		next = newNode;
+		this->next = newNode;
 	}
 	void setPrev(HeapNode *newNode){
-		prev = newNode;
+		this->prev = newNode;
 	}
 	void setParent(HeapNode *newNode){
-		parent = newNode;
+		this->parent = newNode;
 	}
 };
 
@@ -61,10 +63,14 @@ public:
 	Heap(void){ // Constructor
 		min = nullptr; // Heap starts out empty
 	}
-
+  // Destructor
+  ~Heap(){
+        this->min = nullptr;
+        this->head = nullptr;
+    }
 	// Check if the Fib Heap is empty or not
-	bool isEmpty(void){ // Check if heap is empty
-		return min == nullptr; 
+	bool isEmpty(){ // Check if heap is empty
+		return this->min == nullptr;
 	}
 
 	// Insert a node into the Fib Heap
@@ -84,62 +90,114 @@ public:
 			}
 		}
 	}
-	
+
 	// Returns the min value in the Fib Heap
-	int findMin(void){
-		return min->getValue();
+	int findMin(){
+		return this->min->getValue();
 	}
-	
+
 	// TODO - Delete Min
 	// Div
 	// Delete the node with the minimum value and reorganize Fib Heap
-	void deleteMin(void){ // TODO
+	void deleteMin(){ // TODO
 		// Connect the children
-		HeapNode *temp = min->getPrev();
-		for (auto it = min->getChildren().begin(); it != min->getChildren().end(); it++){
-			cout << (*it)->getValue() << endl;
+		HeapNode *temp = this->min->getPrev();
+		for (auto it = this->min->getChildren().begin(); it != this->min->getChildren().end(); it++){
+			// cout << (*it)->getValue() << endl;
 			(*it)->setPrev(temp);
 			temp->setNext(*it);
 			temp = (*it);
 		}
-		temp->setNext(min->getNext());
+		temp->setNext(this->min->getNext());
 		temp->getNext()->setPrev(temp);
-		// Get rid of A and 
+		// Get rid of A and
 	}
-	
+
 	// TODO - Decrease Key
 	// Jack
 	// Decrease the key of a node and change tree if needed
-	
-	
-	// TODO - Merge
-	// Maybe done - Drew
-	// Merge two Fib Heaps
-	
-	
+
+
 	// Getter for the node with the minimum value
-	HeapNode * getMin(){
-		return min;
+	HeapNode* getMin(){
+		return this->min;
 	}
-	
 	// Update the minimum node in the tree to a new node
 	void updateMin(HeapNode *newMin){
-		min = newMin;
+		this->min = newMin;
 	}
+  // Function to display roots of the heap
+  void displayRoots()
+  {
+      HeapNode* temp = this->getHead();
+      if (this->isEmpty())
+          cout << "\nThe heap is empty" << endl;
+      else {
+          cout << "\nThe root nodes of heap are: " << endl;
+          do {
+              cout << temp->getValue();
+              temp = temp->getNext();
+              if (temp != nullptr) {
+                    cout << "-->";
+                }
+            } while (temp != nullptr);
+            cout << endl;
+        }
+    }
 };
 
-int main(void){
-	//Little test for insert
-	Heap* heap = new Heap();
-	heap->insert(new HeapNode(5));
-	heap->insert(new HeapNode(3));
-	heap->insert(new HeapNode(2));
-	heap->insert(new HeapNode(4));
-	heap->insert(new HeapNode(1));
-	HeapNode *trav = heap->getMin();
-	for (int i = 0; i < 10; i++){
-		printf("%d\n", trav->getValue());
-		trav = trav->getNext();
-	}
+
+// TODO: Merge two Fib Heaps
+Heap* merge(Heap* a, Heap* b){
+    Heap* newHeap = new Heap;
+    HeapNode* a_min = a->getMin();
+    HeapNode* b_min = b->getMin();
+
+    if (a_min->getValue() < b_min->getValue()){
+        // Set new min of combined heap and make it the head
+        newHeap->updateMin(a_min);
+        newHeap->updateHead(a_min);
+    } else{
+        // Set new min of combined heap and make it the head
+        newHeap->updateMin(b_min);
+        newHeap->updateHead(b_min);
+    }
+    // Concatenate root lists
+    // b_min->getNext()->setNext(a_min->getNext());
+    // a_min->getNext()->setPrev(b_min->getNext());
+    // a_min->setNext(b_min);
+
+    // Cleanup memory associated with previous heaps.
+    delete a;
+    delete b;
+
+    return newHeap;
+}
+
+
+// Generate a random heap of a size
+Heap* generateHeap(int size){
+    Heap* heap = new Heap();
+
+    for (int i = 0; i < size; i++) {
+        heap->insert(new HeapNode(rand() % 25));
+    }
+    return heap;
+}
+
+int main(){
+    Heap* heap1 = generateHeap(5);
+    Heap* heap2 = generateHeap(5);
+    heap1->displayRoots();
+    heap2->displayRoots();
+
+    // TODO: Finish merge implementation
+    Heap* mergeHeap = merge(heap1, heap2);
+    mergeHeap->displayRoots();
+
+	// while (heap.getHead() != nullptr){
+	// 	cout << heap.getHead()->getValue() << endl;
+	// 	heap.updateHead(heap.getHead()->getNext());
+	// }
 	return 0;
 }
