@@ -7,7 +7,7 @@
 */
 
 // Constructor
-HeapNode::HeapNode(int newVal){
+HeapNode::HeapNode(int newVal) {
 	this->value = newVal;
 	this->prev = nullptr;
 	this->next = nullptr;
