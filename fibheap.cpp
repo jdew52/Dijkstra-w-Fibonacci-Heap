@@ -128,15 +128,81 @@ int Heap::findMin() {
 void Heap::deleteMin() { // TODO
 	// Connect the children
 	HeapNode *temp = this->min->getPrev();
+	int count = 0;
 	for (auto it = this->min->getChildren().begin(); it != this->min->getChildren().end(); it++){
 		// cout << (*it)->getValue() << endl;
 		(*it)->setPrev(temp);
 		temp->setNext(*it);
 		temp = (*it);
+		count++;
 	}
 	temp->setNext(this->min->getNext());
 	temp->getNext()->setPrev(temp);
 	// Get rid of A and
+	
+	this->updateMin(temp);
+	int minVal = this->min->getValue();
+	HeapNode* tempMin;
+	do{
+		if(minVal < temp->getValue()){
+			tempMin = temp;
+		}
+		
+		temp = temp->getNext();
+		
+	}while(temp != min)
+	
+	this->updateMin(tempMin);
+	
+	HeapNode* cons[count];
+	temp = this->min;
+	
+	for(int i = 0; i<count; i++)
+	{
+		cons[i] = null;
+	}
+	
+	do{
+		int degree = 0;
+		for (auto it = temp->getChildren().begin(); it != temp->getChildren().end(); it++){
+			degree++;
+		}
+		
+		if(cons[degree] == null){
+			cons[degree] = temp;
+			temp = temp->getNext();
+		}
+		else{
+			cons[degree]->getNext()->setPrev(cons[degree]->getPrev());
+			cons[degree]->getPrev()->setNext(cons[degree]->getNext());
+			
+			if(cons[degree]->getValue >= temp->getValue){
+				
+				cons[degree]->setNext(null);
+				cons[degree]->setPrev(null);
+				
+				temp->getChildren().push_back(cons[degree]);
+			
+			}
+			else{
+				
+				cons[degree]->setNext(temp->getNext());
+				cons[degree]->setPrev(temp->getPrev());
+				
+				temp->setNext(null);
+				temp->setPrev(null);
+				
+				cons[degree]->getChildren().push_back(temp);
+				
+				temp = cons[degree];
+				
+			}
+			
+			cons[degree] = null;
+		}
+		
+	}while(temp != min)
+	
 }
 
 // TODO - Decrease Key
