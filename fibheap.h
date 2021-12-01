@@ -59,21 +59,14 @@ public:
 	// Getter for the node with the minimum value
 	HeapNode* getMin();
 
-	// Getter for head node
-	HeapNode* getHead();
-
 	// Update the minimum node in the tree to a new node
 	void updateMin(HeapNode *newMin);
-
-	// Update the head node in Fib Heap to a new node
-	void updateHead(HeapNode *newHead);
 
     // Function to display roots of the heap
     void displayRoots();
 
 private:
     HeapNode *min;  // min functions as the root node of the Fibonacci Heap
-    HeapNode *head; // Head of list of heaps
 };
 
 #endif // FIB_HEAP_H
