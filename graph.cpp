@@ -99,6 +99,30 @@ private:
 };
 
 
+void dijkstra(Graph graph, int source) {
+    int edgeWeight;
+
+    // TODO: Initialize PQ with ALL nodes of graph. Set source node
+
+    while (!pq.empty()) {
+        // u = Pop(&pq);
+        Node u = new Node;
+
+        for(vector<Edge>::iterator it = graph.adjacenyList[u].begin();
+                                   it != graph.adjacenyList[u].end(); it++) {
+           edgeWeight = (*it).weight;
+
+           if (u.distance + edgeWeight < graph.nodes[(*it).dst].distance) {
+               // Update edge distance in map
+               graph.nodes[u].distance = graph.nodes[u].distance + edgeWeight;
+
+               // TODO: Decrease key in PQ
+           }
+        }
+    }
+}
+
+
 // Test Graph class
 int main(int argc, char* argv[])
 {
