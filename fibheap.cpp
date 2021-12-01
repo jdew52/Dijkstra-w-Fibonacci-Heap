@@ -57,20 +57,16 @@ public:
 	*	merge
 */
 class Heap {
-	HeapNode *min;  // min functions as the root node of the Fibonacci Heap
-	HeapNode *head; // Head of list of heaps
+	HeapNode *min; // min functions as the root node of the Fibonacci Heap
 
 public:
-	Heap(){ // Constructor
-		this->min = nullptr; // Heap starts out empty
-        this->head = nullptr;
+	Heap(void){ // Constructor
+		min = nullptr; // Heap starts out empty
 	}
-    // Destructor
-    ~Heap(){
+  // Destructor
+  ~Heap(){
         this->min = nullptr;
-        this->head = nullptr;
     }
-
 	// Check if the Fib Heap is empty or not
 	bool isEmpty(){ // Check if heap is empty
 		return this->min == nullptr;
@@ -78,18 +74,18 @@ public:
 
 	// Insert a node into the Fib Heap
 	// Node inserted will be a new root in the list of roots
-	void insert(HeapNode* node){ // Insert a node into the heap
-		if (this->isEmpty()){
-            cout << "Heap is empty. Making node " << node->getValue() << " the min and head" << endl;
-			this->min = node;
-			this->head = node;
+	void insert(HeapNode *node){ // Insert a node into the heap
+		if (isEmpty()){
+			node->setNext(node);
+			node->setPrev(node);
+			min = node;
 		} else {
-			node->setNext(head);
-			this->head->setPrev(node);
-			this->head = node;
-			if (node->getValue() < this->min->getValue()){
-                cout << "The minimum was updated to " << node->getValue() << endl;
-				this->min = node;
+			node->setNext(min->getNext());
+			node->setPrev(min);
+			node->getNext()->setPrev(node);
+			min->setNext(node);
+			if (node->getValue() < min->getValue()){
+				min = node;
 			}
 		}
 	}
@@ -125,39 +121,27 @@ public:
 	HeapNode* getMin(){
 		return this->min;
 	}
-
-	// Getter for head node
-	HeapNode* getHead(){
-		return this->head;
-	}
-
 	// Update the minimum node in the tree to a new node
 	void updateMin(HeapNode *newMin){
 		this->min = newMin;
 	}
-
-	// Update the head node in Fib Heap to a new node
-	void updateHead(HeapNode *newHead){
-		this->head = newHead;
-	}
-
-    // Function to display roots of the heap
-    void displayRoots()
-    {
-        HeapNode* temp = this->getHead();
-
-        if (this->isEmpty())
-            cout << "\nThe heap is empty" << endl;
-        else {
-            cout << "\nThe root nodes of heap are: " << endl;
-            do {
-                cout << temp->getValue();
-                temp = temp->getNext();
-
-                if (temp != nullptr) {
+  // Function to display roots of the heap
+  void displayRoots()
+  {
+      HeapNode* temp = this->getMin();
+      if (this->isEmpty())
+          cout << "\nThe heap is empty" << endl;
+      else {
+          cout << "\nThe root nodes of heap are: " << endl;
+          cout << temp->getValue() << "-->";
+	      temp = temp->getNext();
+	  do {
+              cout << temp->getValue();
+              temp = temp->getNext();
+              if (temp != nullptr) {
                     cout << "-->";
                 }
-            } while (temp != nullptr);
+            } while (temp != min);
             cout << endl;
         }
     }
@@ -173,11 +157,9 @@ Heap* merge(Heap* a, Heap* b){
     if (a_min->getValue() < b_min->getValue()){
         // Set new min of combined heap and make it the head
         newHeap->updateMin(a_min);
-        newHeap->updateHead(a_min);
     } else{
         // Set new min of combined heap and make it the head
         newHeap->updateMin(b_min);
-        newHeap->updateHead(b_min);
     }
     // Concatenate root lists
     // b_min->getNext()->setNext(a_min->getNext());
