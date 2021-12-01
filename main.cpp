@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
     Heap* heap2 = Heap::generateHeap(5);
     Heap* heap3 = Heap::generateHeap(3);
     heap1->insert(new HeapNode(1));
-    
+
     heap1->displayRoots();
     heap2->displayRoots();
     heap3->displayRoots();
@@ -21,6 +21,10 @@ int main(int argc, char* argv[]) {
     // Merging new heap and heap 3
     mergeHeap = Heap::merge(mergeHeap, heap3);
     mergeHeap->displayRoots();
+
+    // TODO: Test deleteMin here
+    // mergeHeap->deleteMin();
+    // mergeHeap->displayRoots();
 
     cout << "---------------- Testing Graph Generation ----------------" << endl;
     // Generate worst cast graph of size N
