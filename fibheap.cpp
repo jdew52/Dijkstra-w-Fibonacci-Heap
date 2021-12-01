@@ -133,8 +133,6 @@ public:
           cout << "\nThe heap is empty" << endl;
       else {
           cout << "\nThe root nodes of heap are: " << endl;
-          cout << temp->getValue() << "-->";
-	      temp = temp->getNext();
 	  do {
               cout << temp->getValue();
               temp = temp->getNext();
