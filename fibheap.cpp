@@ -53,6 +53,17 @@ void HeapNode::setParent(HeapNode *newNode) {
 void HeapNode::setChildren(HeapNode *newNode) {
     this->children = newNode;
 }
+void HeapNode::addChildren(HeapNode *newNode) {
+    if(this->children == nullptr){
+		setChildren(newNode);
+	}
+	else{
+		newNode->prev = children;
+		newNode->next = children->next;
+		children->next->prev = newNode;
+		children->next = newNode;
+	}
+}
 
 
 /*
@@ -140,7 +151,7 @@ int Heap::findMin() {
 // TODO - Delete Min
 // Div
 // Delete the node with the minimum value and reorganize Fib Heap
-/*
+
 void Heap::deleteMin() { // TODO
 	// Connect the children
 	HeapNode *temp = this->min->getPrev();
@@ -151,17 +162,25 @@ void Heap::deleteMin() { // TODO
     }
 
 	int minChildCount = 0;
-	for (auto it = this->min->getChildren().begin();
-              it != this->min->getChildren().end(); it++) {
+	for (HeapNode* it = this->min->getChildren();
+              it != nullptr; it = it->getNext()) {
 		// cout << (*it)->getValue() << endl;
-		(*it)->setPrev(temp);
-		temp->setNext(*it);
-		temp = (*it);
+		it->setPrev(temp);
+		temp->setNext(it);
+		temp = it;
 		minChildCount++;
 	}
 	temp->setNext(this->min->getNext());
 	temp->getNext()->setPrev(temp);
 
+	if(minChildCount == 0)
+	{
+		for (HeapNode* it = this->min;
+			it != nullptr; it = it->getNext()) {
+			minChildCount++;
+		}
+	}
+	
 	this->updateMin(temp);
 	int minVal = temp->getValue();
 	HeapNode* tempMin = temp;
@@ -186,7 +205,12 @@ void Heap::deleteMin() { // TODO
 
     if (minChildCount != 0) {
     	do {
-    		int degree = temp->getChildren().size();
+    		int degree = 0;
+			for (HeapNode* it = temp->getChildren();
+              it != nullptr; it = it->getNext()) {
+				degree++;
+			}
+			
     		if (cons[degree] == nullptr) {
     			cons[degree] = temp;
     			temp = temp->getNext();
@@ -200,7 +224,7 @@ void Heap::deleteMin() { // TODO
     				cons[degree]->setNext(nullptr);
     				cons[degree]->setPrev(nullptr);
 
-    				temp->getChildren().push_back(cons[degree]);
+    				temp->addChildren(cons[degree]);
     			}
     			else {
 
@@ -210,7 +234,7 @@ void Heap::deleteMin() { // TODO
     				temp->setNext(nullptr);
     				temp->setPrev(nullptr);
 
-    				cons[degree]->getChildren().push_back(temp);
+    				cons[degree]->addChildren(temp);
 
     				temp = cons[degree];
     			}
@@ -220,7 +244,8 @@ void Heap::deleteMin() { // TODO
     	} while(temp != min);
     }
 }
-*/
+
+
 void Heap::moveToRoot(HeapNode *node){
     if (node->getParent() == nullptr){
         return;

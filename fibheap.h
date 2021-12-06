@@ -21,6 +21,7 @@ public:
 	void setPrev(HeapNode *newNode);
 	void setParent(HeapNode *newNode);
 	void setChildren(HeapNode *newNode);
+	void addChildren(HeapNode *newNode);
 
 private:
     int value;   // data in node
