@@ -10,10 +10,8 @@ using namespace std;
 struct Node {
     static const int inf = 10000000;
     // Default constructor
-    Node() : visited('F'), distance(inf) {}
-    char visited;   // Keeps track if node has been visited (T), not visited and not in queue (F), or not visited and in queue (Q)
-    int distance;   // Distance from source node
-    HeapNode* ref;  // Reference to node in heap
+    Node() : ref(nullptr) {};
+    HeapNode* ref;  // Pointer to node in heap
 };
 
 
@@ -42,10 +40,22 @@ public:
     // Auxiliary function to print graph with edge weights
     void printGraph();
 
+    // Get all adjacent nodes of another
+    vector<Edge> getAdj(int u);
+
+    // Get pointer the ith node's corresponding heap node
+    HeapNode* getNode(int i);
+
+    // Set pointer the ith node's corresponding heap node
+    void setNode(int i, HeapNode* node);
+
+    // Initialize a PQ for given source
+    Heap* initPQ(int source);
+
 private:
     int size;
     vector<Edge>* adjacenyList;
-    Node* nodes;
+    HeapNode** nodes;
 };
 
 

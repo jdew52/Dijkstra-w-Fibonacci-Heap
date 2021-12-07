@@ -7,7 +7,7 @@
 Graph::Graph(int size) {
     this->size = size;
     this->adjacenyList = new vector<Edge>[size];
-    this->nodes = new Node[size];
+    this->nodes = new HeapNode*[size];
 }
 
 // Destructor
@@ -64,33 +64,60 @@ void Graph::printGraph()
 }
 
 
-void dijkstra(Graph* graph, int source) {
-    int edgeWeight;
 
-    // TODO: Initialize PQ with ALL nodes of graph. Set source node
+HeapNode* Graph::getNode(int i) {
+    return this->nodes[i];
+}
+
+void Graph::setNode(int i, HeapNode* node) {
+    this->nodes[i] = node;
+}
+
+Heap* Graph::initPQ(int source) {
+    // Set source node
     Heap* pq = new Heap();
-    for (int v = 0; v < this->size; v++)
+    this->setNode(source, new HeapNode(source, 0));
+    pq->insert(this->getNode(source));
+
+    // Initialize PQ with ALL other nodes of graph
+    for (int i = 0; i < this->size; i++)
     {
-        // Note: Index also corresponds to value of node
-        graph->nodes[i].ref = new HeapNode(v);
-        pq->insert(graph->nodes[i].ref);
-    }
-
-    while (!pq->empty()) {
-        u = pq->extractMin(&pq);
-        Node u = new Node();
-
-        for(vector<Edge>::iterator it = graph->adjacenyList[u].begin();
-                                   it != graph->adjacenyList[u].end(); it++) {
-           edgeWeight = (*it).weight;
-
-           if (u.distance + edgeWeight < graph->nodes[(*it).dst].distance) {
-               // Update edge distance in map
-               graph->nodes[u].distance = graph->nodes[u].distance + edgeWeight;
-
-               // Decrease key in PQ using heapnode reference
-               pq->decreaseKey(graph->nodes[u].ref, u.distance + edgeWeight);
-           }
+        if (i != source) {
+            // Set pointer to node in heap
+            this->setNode(i, new HeapNode(i, Node::inf));
+            pq->insert(this->getNode(i));
         }
     }
+
+    return pq;
+}
+
+vector<Edge> Graph::getAdj(int u) {
+    return this->adjacenyList[u];
+}
+
+// Note: Node 0 is ALWAYS assumed to be start node.
+void dijkstra(Graph* graph) {
+    int edgeWeight = 0;
+    HeapNode* v = nullptr;
+
+    Heap* pq = graph->initPQ(0);
+    // while (!pq->isEmpty()) {
+    //     // Extract and delete minimum
+    //     HeapNode* u = pq->extractMin();
+    //
+    //     // Iterate through all neighbors
+    //     vector<Edge> neighbors = graph->getAdj(u->getId());
+    //     for(vector<Edge>::iterator it = neighbors.begin();
+    //                                it != neighbors.end(); it++) {
+    //        edgeWeight = (*it).weight;
+    //        v = graph->getNode((*it).dst);
+    //
+    //        // Perform edge relaxation where necessary
+    //        if (u->getValue() + edgeWeight < v->getValue()) {
+    //            // Decrease key in PQ using heapnode reference
+    //            pq->decreaseKey(v, u->getValue() + edgeWeight);
+    //        }
+    //     }
+    // }
 }
