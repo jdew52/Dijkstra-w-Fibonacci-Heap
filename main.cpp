@@ -24,13 +24,16 @@ int main(int argc, char* argv[]) {
 
     cout << "---------------- Testing deleteMin ----------------" << endl;
     // Test deletion of all nodes
-    for (int i = 0; i < 14; i++) {
+	int a = 0;
+	int i = 0;
+    while(a == 0) {
         cout << "Delete count " << i+1 << endl;
-        mergeHeap->deleteMin();
+        a = mergeHeap->deleteMin();
         if (mergeHeap->getMin() != nullptr) {
             cout << "New min: " << mergeHeap->getMin()->getValue() << endl;
         }
         mergeHeap->displayRoots();
+		i++;
     }
     // TODO: Test deleteMin with heap that contains children
 

@@ -14,10 +14,15 @@ HeapNode::HeapNode(int newVal) {
 	this->next = nullptr;
 	this->parent = nullptr;
 	this->children = nullptr;
+	this->deg = 0;
 }
 
 bool HeapNode::isMarked() {
     return this->marked;
+}
+
+int HeapNode::getDegree() {
+    return this->deg;
 }
 
 int HeapNode::getValue() {
@@ -52,16 +57,24 @@ void HeapNode::setParent(HeapNode *newNode) {
 }
 void HeapNode::setChildren(HeapNode *newNode) {
     this->children = newNode;
+	this->deg++;
 }
 void HeapNode::addChildren(HeapNode *newNode) {
     if(this->children == nullptr){
 		setChildren(newNode);
 	}
 	else{
-		newNode->prev = children;
-		newNode->next = children->next;
-		children->next->prev = newNode;
-		children->next = newNode;
+		newNode->setPrev(children);
+		newNode->setNext(children->getNext());
+		if(children->getNext() != nullptr){
+		children->getNext()->setPrev(newNode);
+		children->setNext(newNode);
+		}
+		else{
+			children->setPrev(newNode);
+			children->setNext(newNode);
+		}
+		this->deg++;
 	}
 }
 
@@ -152,49 +165,70 @@ int Heap::findMin() {
 // Div
 // Delete the node with the minimum value and reorganize Fib Heap
 
-void Heap::deleteMin() { // TODO
+int Heap::deleteMin() { // TODO
 	// Connect the children
 	HeapNode *temp = this->min->getPrev();
-    if (this->getMin() == temp) {  // Only 1 node left
+    
+	if (this->getMin() == temp) {  // Only 1 node left
         this->min = nullptr;
         this->updateMin(nullptr);
-        return;
+        return 1;
     }
 
 	int minChildCount = 0;
-	for (HeapNode* it = this->min->getChildren();
-              it != nullptr; it = it->getNext()) {
-		// cout << (*it)->getValue() << endl;
-		it->setPrev(temp);
-		temp->setNext(it);
-		temp = it;
-		minChildCount++;
-	}
-	temp->setNext(this->min->getNext());
-	temp->getNext()->setPrev(temp);
-
-	if(minChildCount == 0)
-	{
-		for (HeapNode* it = this->min;
-			it != nullptr; it = it->getNext()) {
-			minChildCount++;
+	bool hasChild = false;
+	
+	if(min->getChildren() != nullptr){
+		for (HeapNode* it = this->min->getChildren()->getNext();
+				  it != nullptr; it = it->getNext()) {
+			// cout << (*it)->getValue() << endl;
+			//cout<<"loop 1\n";
+			it->setPrev(temp);
+			temp->setNext(it);
+			it->setParent(nullptr);
+			temp = it;
+			hasChild = true;
 		}
+	}
+	
+	if(hasChild == true){
+		this->min->getChildren()->setParent(nullptr);
+		temp->setNext(this->min->getChildren());
+		temp->getNext()->setNext(this->min->getNext());
+		temp->getNext()->setPrev(this->min->getNext());
+		this->min->getNext()->setPrev(temp->getNext());
+	}
+	else{
+		temp->setNext(this->min->getNext());
+		temp->getNext()->setPrev(temp);	
 	}
 	
 	this->updateMin(temp);
 	int minVal = temp->getValue();
 	HeapNode* tempMin = temp;
+	
 	do {
+		
 		if (minVal > temp->getValue()) {
 			tempMin = temp;
             minVal = tempMin->getValue();
 		}
 
 		temp = temp->getNext();
+		
 	} while(temp != min);
 
 	this->updateMin(tempMin);
-
+	
+	temp = this->min;
+	
+	do{
+		minChildCount++;
+		//cout<<"loop 2\n";
+		//cout<<temp->getValue()<<endl;
+		temp = temp->getNext();
+	}while(temp != this->min);
+	
 	HeapNode* cons[minChildCount];
 	temp = this->min;
 
@@ -202,47 +236,62 @@ void Heap::deleteMin() { // TODO
 	{
 		cons[i] = nullptr;
 	}
-
+	//this->displayRoots();
+	//this->min->getPrev()->setNext(nullptr);
+	//this->min->setPrev(nullptr);
+	
     if (minChildCount != 0) {
     	do {
-    		int degree = 0;
-			for (HeapNode* it = temp->getChildren();
-              it != nullptr; it = it->getNext()) {
-				degree++;
-			}
+			int degree = temp->getDegree();
+			//cout<<"Inside Loop"<<endl;
+			//cout<<"Current root node value: "<<temp->getValue()<<endl;
+			//cout<<"Degree: "<<degree<<endl;
 			
     		if (cons[degree] == nullptr) {
+				//cout<<"Inside IF"<<endl;
     			cons[degree] = temp;
     			temp = temp->getNext();
+				//cout<<temp->getValue();
+				continue;
     		}
+			
     		else {
+				//cout<<"Inside Else"<<endl;
+				
     			cons[degree]->getNext()->setPrev(cons[degree]->getPrev());
     			cons[degree]->getPrev()->setNext(cons[degree]->getNext());
+				cons[degree]->setNext(nullptr);
+   				cons[degree]->setPrev(nullptr);
 
+				//cout<<cons[degree]->getValue()<<endl;
+				
     			if (cons[degree]->getValue() >= temp->getValue()) {
-
-    				cons[degree]->setNext(nullptr);
-    				cons[degree]->setPrev(nullptr);
-
+					
+					//cout<<"Inside If 2"<<endl;
+    				
     				temp->addChildren(cons[degree]);
+					cons[degree]->setParent(temp);
+					
     			}
     			else {
-
+					//cout<<"Inside Else 2"<<endl;
     				cons[degree]->setNext(temp->getNext());
     				cons[degree]->setPrev(temp->getPrev());
-
+					temp->getNext()->setPrev(cons[degree]);
+					temp->getPrev()->setNext(cons[degree]);
     				temp->setNext(nullptr);
     				temp->setPrev(nullptr);
-
     				cons[degree]->addChildren(temp);
-
+					temp->setParent(cons[degree]);
     				temp = cons[degree];
     			}
     			cons[degree] = nullptr;
     		}
 
-    	} while(temp != min);
+    	} while(temp->getNext() != this->min);
+		//this->min->getPrev()->setNext(this->min);
     }
+	return 0;
 }
 
 
@@ -312,6 +361,7 @@ void Heap::displayRoots() {
     else {
         cout << "\nThe root nodes of heap are: " << endl;
         do {
+			//cout<<endl;
             cout << temp->getValue();
             temp = temp->getNext();
 
