@@ -64,25 +64,33 @@ void Graph::printGraph()
 }
 
 
-// void dijkstra(Graph graph, int source) {
-//     int edgeWeight;
-//
-//     // TODO: Initialize PQ with ALL nodes of graph. Set source node
-//
-//     while (!pq.empty()) {
-//         // u = Pop(&pq);
-//         Node u = new Node();
-//
-//         for(vector<Edge>::iterator it = graph.adjacenyList[u].begin();
-//                                    it != graph.adjacenyList[u].end(); it++) {
-//            edgeWeight = (*it).weight;
-//
-//            if (u.distance + edgeWeight < graph.nodes[(*it).dst].distance) {
-//                // Update edge distance in map
-//                graph.nodes[u].distance = graph.nodes[u].distance + edgeWeight;
-//
-//                // TODO: Decrease key in PQ
-//            }
-//         }
-//     }
-// }
+void dijkstra(Graph* graph, int source) {
+    int edgeWeight;
+
+    // TODO: Initialize PQ with ALL nodes of graph. Set source node
+    Heap* pq = new Heap();
+    for (int v = 0; v < this->size; v++)
+    {
+        // Note: Index also corresponds to value of node
+        graph->nodes[i].ref = new HeapNode(v);
+        pq->insert(graph->nodes[i].ref);
+    }
+
+    while (!pq->empty()) {
+        u = pq->extractMin(&pq);
+        Node u = new Node();
+
+        for(vector<Edge>::iterator it = graph->adjacenyList[u].begin();
+                                   it != graph->adjacenyList[u].end(); it++) {
+           edgeWeight = (*it).weight;
+
+           if (u.distance + edgeWeight < graph->nodes[(*it).dst].distance) {
+               // Update edge distance in map
+               graph->nodes[u].distance = graph->nodes[u].distance + edgeWeight;
+
+               // Decrease key in PQ using heapnode reference
+               pq->decreaseKey(graph->nodes[u].ref, u.distance + edgeWeight);
+           }
+        }
+    }
+}

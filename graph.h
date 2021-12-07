@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include "fibheap.h"
 
 using namespace std;
 
@@ -12,6 +13,7 @@ struct Node {
     Node() : visited('F'), distance(inf) {}
     char visited;   // Keeps track if node has been visited (T), not visited and not in queue (F), or not visited and in queue (Q)
     int distance;   // Distance from source node
+    HeapNode* ref;  // Reference to node in heap
 };
 
 
@@ -47,6 +49,6 @@ private:
 };
 
 
-void dijkstra(Graph graph, int source);
+void dijkstra(Graph* graph, int source);
 
 #endif // GRAPH_H
