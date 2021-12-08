@@ -8,8 +8,9 @@ using namespace std;
 class HeapNode {
 public:
     // Constructor
-	HeapNode(int newVal);
-    bool isMarked();
+	HeapNode(int id, int newVal);
+  bool isMarked();
+  int getId();
 	int getValue();
 	HeapNode * getNext();
 	HeapNode * getPrev();
@@ -23,6 +24,7 @@ public:
 	void setChildren(HeapNode *newNode);
 
 private:
+    int id;      // id in graph
     int value;   // data in node
     bool marked; // flag to check if a node has had children removed
     HeapNode *prev, *next; // List Pointers
