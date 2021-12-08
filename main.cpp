@@ -45,6 +45,5 @@ int main(int argc, char* argv[]) {
         Graph G = Graph::generateWorstCaseGraph(atoi(argv[1]));
         G.printGraph();
     }
-
 	return 0;
 }

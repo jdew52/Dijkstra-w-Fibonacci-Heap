@@ -10,10 +10,16 @@
 HeapNode::HeapNode(int id, int newVal) :
     id(id),
     value(newVal),
+    marked(false),
     prev(nullptr),
     next(nullptr),
-    parent(nullptr)
+    parent(nullptr),
+    children(nullptr)
 {}
+
+bool HeapNode::isMarked() {
+    return this->marked;
+}
 
 int HeapNode::getId() {
     return this->id;
@@ -30,8 +36,14 @@ HeapNode* HeapNode::getPrev() {
 HeapNode* HeapNode::getParent() {
 	return this->parent;
 }
-vector<HeapNode *> HeapNode::getChildren() {
+HeapNode * HeapNode::getChildren() {
 	return this->children;
+}
+void HeapNode::setValue(int newValue){
+    this->value = newValue;
+}
+void HeapNode::setMarked() {
+    this->marked = !this->marked;
 }
 void HeapNode::setNext(HeapNode *newNode) {
 	this->next = newNode;
@@ -41,6 +53,9 @@ void HeapNode::setPrev(HeapNode *newNode) {
 }
 void HeapNode::setParent(HeapNode *newNode) {
 	this->parent = newNode;
+}
+void HeapNode::setChildren(HeapNode *newNode) {
+    this->children = newNode;
 }
 
 
@@ -129,6 +144,7 @@ int Heap::findMin() {
 // TODO - Delete Min
 // Div
 // Delete the node with the minimum value and reorganize Fib Heap
+/*
 void Heap::deleteMin() { // TODO
 	// Connect the children
 	HeapNode *temp = this->min->getPrev();
@@ -208,10 +224,52 @@ void Heap::deleteMin() { // TODO
     	} while(temp != min);
     }
 }
+*/
+void Heap::moveToRoot(HeapNode *node){
+    if (node->getParent() == nullptr){
+        return;
+    }
+    // Cut off the parent and child
+    // Change child ptr if needed
+    if (node->getParent()->getChildren() == node){
+        node->getParent()->setChildren(node->getNext());
+    }
+    node->setParent(nullptr); // Remove node's parent
+    // Redo linking of child list
+    if (node->getPrev() != nullptr) {
+        node->getPrev()->setNext(node->getNext());
+    }
+    if (node->getNext() != nullptr) {
+        node->getNext()->setPrev(node->getPrev());
+    }
+    // Insert node into root list
+    this->insert(node);
+}
 
 // TODO - Decrease Key
-// Jack
 // Decrease the key of a node and change tree if needed
+void Heap::decreaseKey(HeapNode *node, int newValue){
+    if (this->min == nullptr){
+        return;
+    }
+    if (node == nullptr){
+        return;
+    }
+    node->setValue(newValue);
+    // if heap property is violated
+    if (node->getParent() != nullptr && node->getValue() < node->getParent()->getValue()){
+        HeapNode *parent = node->getParent();
+        while (parent->isMarked()){
+            this->moveToRoot(node);
+            node = parent;
+            parent = node->getParent();
+        }
+        this->moveToRoot(node);
+        parent->setMarked();
+    } else if (node->getValue() < min->getValue()){
+        min = node;
+    }
+}
 
 
 // Getter for the node with the minimum value

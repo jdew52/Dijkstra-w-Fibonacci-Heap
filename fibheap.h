@@ -9,16 +9,19 @@ class HeapNode {
 public:
     // Constructor
 	HeapNode(int id, int newVal);
-
-    int getId();
+  bool isMarked();
+  int getId();
 	int getValue();
 	HeapNode * getNext();
 	HeapNode * getPrev();
 	HeapNode * getParent();
-	vector<HeapNode *> getChildren();
+	HeapNode * getChildren();
+	void setValue(int newValue);
+	void setMarked();
 	void setNext(HeapNode *newNode);
 	void setPrev(HeapNode *newNode);
 	void setParent(HeapNode *newNode);
+	void setChildren(HeapNode *newNode);
 
 private:
     int id;      // id in graph
@@ -26,7 +29,7 @@ private:
     bool marked; // flag to check if a node has had children removed
     HeapNode *prev, *next; // List Pointers
     HeapNode *parent;
-    vector<HeapNode *> children;
+    HeapNode * children;
 };
 
 
@@ -53,10 +56,13 @@ public:
 	// Delete the node with the minimum value and reorganize Fib Heap
 	void deleteMin();
 
+    // Moves a node to the root list of the heap
+    void moveToRoot(HeapNode *node);
+
 	// TODO - Decrease Key
 	// Jack
 	// Decrease the key of a node and change tree if needed
-    void decreaseKey();
+    void decreaseKey(HeapNode *node, int newValue);
 
 	// Getter for the node with the minimum value
 	HeapNode* getMin();
