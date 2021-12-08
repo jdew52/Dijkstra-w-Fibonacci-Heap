@@ -3,6 +3,8 @@
 #include <iterator>
 #include <vector>
 
+const int inf = 10000000;
+
 // Constructor
 Graph::Graph(int size) {
     this->size = size;
@@ -84,7 +86,7 @@ Heap* Graph::initPQ(int source) {
     {
         if (i != source) {
             // Set pointer to node in heap
-            this->setNode(i, new HeapNode(i, Node::inf));
+            this->setNode(i, new HeapNode(i, inf));
             pq->insert(this->getNode(i));
         }
     }
@@ -119,5 +121,7 @@ void dijkstra(Graph* graph) {
     //            pq->decreaseKey(v, u->getValue() + edgeWeight);
     //        }
     //     }
+    //     // Cleanup memory.
+    //     delete u;
     // }
 }

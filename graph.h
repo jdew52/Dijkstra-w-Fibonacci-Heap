@@ -7,14 +7,6 @@
 
 using namespace std;
 
-struct Node {
-    static const int inf = 10000000;
-    // Default constructor
-    Node() : ref(nullptr) {};
-    HeapNode* ref;  // Pointer to node in heap
-};
-
-
 struct Edge {
     Edge(int dst, int weight) {
         this->dst = dst;
@@ -43,19 +35,19 @@ public:
     // Get all adjacent nodes of another
     vector<Edge> getAdj(int u);
 
-    // Get pointer the ith node's corresponding heap node
+    // Get pointer to the ith node's corresponding heap node
     HeapNode* getNode(int i);
 
-    // Set pointer the ith node's corresponding heap node
+    // Set pointer to the ith node's corresponding heap node
     void setNode(int i, HeapNode* node);
 
     // Initialize a PQ for given source
     Heap* initPQ(int source);
 
 private:
-    int size;
-    vector<Edge>* adjacenyList;
-    HeapNode** nodes;
+    int size;                   // # Nodes in graph.
+    vector<Edge>* adjacenyList; // Outgoing edges for each node of graph.
+    HeapNode** nodes;           // Pointers to corresponding HeapNodes in PQ
 };
 
 
