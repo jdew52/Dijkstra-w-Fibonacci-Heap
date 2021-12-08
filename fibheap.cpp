@@ -7,13 +7,17 @@
 */
 
 // Constructor
-HeapNode::HeapNode(int newVal) {
-	this->value = newVal;
-	this->prev = nullptr;
-	this->next = nullptr;
-	this->parent = nullptr;
-}
+HeapNode::HeapNode(int id, int newVal) :
+    id(id),
+    value(newVal),
+    prev(nullptr),
+    next(nullptr),
+    parent(nullptr)
+{}
 
+int HeapNode::getId() {
+    return this->id;
+}
 int HeapNode::getValue() {
 	return this->value;
 }
@@ -89,7 +93,7 @@ Heap* Heap::generateHeap(int size) {
     Heap* heap = new Heap();
 
     for (int i = 0; i < size; i++) {
-        heap->insert(new HeapNode(rand() % 25));
+        heap->insert(new HeapNode(i, rand() % 25));
     }
     return heap;
 }
