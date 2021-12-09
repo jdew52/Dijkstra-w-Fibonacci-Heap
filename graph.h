@@ -3,17 +3,9 @@
 
 #include <vector>
 #include <iostream>
+#include "fibheap.h"
 
 using namespace std;
-
-struct Node {
-    static const int inf = 10000000;
-    // Default constructor
-    Node() : visited('F'), distance(inf) {}
-    char visited;   // Keeps track if node has been visited (T), not visited and not in queue (F), or not visited and in queue (Q)
-    int distance;   // Distance from source node
-};
-
 
 struct Edge {
     Edge(int dst, int weight) {
@@ -40,13 +32,25 @@ public:
     // Auxiliary function to print graph with edge weights
     void printGraph();
 
+    // Get all adjacent nodes of another
+    vector<Edge> getAdj(int u);
+
+    // Get pointer to the ith node's corresponding heap node
+    HeapNode* getNode(int i);
+
+    // Set pointer to the ith node's corresponding heap node
+    void setNode(int i, HeapNode* node);
+
+    // Initialize a PQ for given source
+    Heap* initPQ(int source);
+
 private:
-    int size;
-    vector<Edge>* adjacenyList;
-    Node* nodes;
+    int size;                   // # Nodes in graph.
+    vector<Edge>* adjacenyList; // Outgoing edges for each node of graph.
+    HeapNode** nodes;           // Pointers to corresponding HeapNodes in PQ
 };
 
 
-void dijkstra(Graph graph, int source);
+void dijkstra(Graph* graph, int source);
 
 #endif // GRAPH_H

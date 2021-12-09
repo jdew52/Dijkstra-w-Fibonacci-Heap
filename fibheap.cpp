@@ -7,6 +7,7 @@
 */
 
 // Constructor
+
 HeapNode::HeapNode(int newVal) {
 	this->value = newVal;
 	this->marked = false;
@@ -17,12 +18,17 @@ HeapNode::HeapNode(int newVal) {
 	this->deg = 0;
 }
 
+
 bool HeapNode::isMarked() {
     return this->marked;
 }
 
+
 int HeapNode::getDegree() {
     return this->deg;
+}
+int HeapNode::getId() {
+    return this->id;
 }
 
 int HeapNode::getValue() {
@@ -127,7 +133,7 @@ Heap* Heap::generateHeap(int size) {
     Heap* heap = new Heap();
 
     for (int i = 0; i < size; i++) {
-        heap->insert(new HeapNode(rand() % 25));
+        heap->insert(new HeapNode(i, rand() % 25));
     }
     return heap;
 }

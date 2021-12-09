@@ -8,7 +8,9 @@ int main(int argc, char* argv[]) {
     Heap* heap1 = Heap::generateHeap(5);
     Heap* heap2 = Heap::generateHeap(5);
     Heap* heap3 = Heap::generateHeap(3);
-    heap1->insert(new HeapNode(1));
+
+    heap1->insert(new HeapNode(13, 1));
+
 
     heap1->displayRoots();
     heap2->displayRoots();
@@ -24,11 +26,13 @@ int main(int argc, char* argv[]) {
 
     cout << "---------------- Testing deleteMin ----------------" << endl;
     // Test deletion of all nodes
+
 	int a = 0;
 	int i = 0;
     while(a == 0) {
         cout << "Delete count " << i+1 << endl;
-        a = mergeHeap->deleteMin();
+        a = mergeHeap->deleteMin();;
+
         if (mergeHeap->getMin() != nullptr) {
             cout << "New min: " << mergeHeap->getMin()->getValue() << endl;
         }
