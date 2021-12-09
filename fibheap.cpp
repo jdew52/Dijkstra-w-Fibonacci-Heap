@@ -56,20 +56,25 @@ void HeapNode::setParent(HeapNode *newNode) {
 	this->parent = newNode;
 }
 void HeapNode::setChildren(HeapNode *newNode) {
+
+	newNode->setNext(newNode);
+	newNode->setPrev(newNode);
     this->children = newNode;
-	this->deg++;
 }
-void HeapNode::addChildren(HeapNode *newNode) {
-    HeapNode* temp = this->children;
-	if(this->children == nullptr){
-		setChildren(newNode);
-	}
-	else{
-		this->children = newNode;
-		newNode->setNext(temp);
-		temp->setPrev(newNode);
-		this->deg++;
-	}
+
+void HeapNode::addChildren(HeapNode *newNode){
+    this->deg++;
+	if (this->getChildren() == nullptr){
+        setChildren(newNode);
+        return;
+    }
+	
+	newNode->setNext(this->children);
+	newNode->setPrev(this->children->getPrev());
+	this->children->getPrev()->setNext(newNode);
+	this->children->setPrev(newNode);
+	this->children = newNode;
+
 }
 
 
@@ -162,8 +167,9 @@ int Heap::findMin() {
 int Heap::deleteMin() { // TODO
 	// Connect the children
 	HeapNode *temp = this->min->getPrev();
-    
-	if (this->getMin() == temp) {  // Only 1 node left
+	
+	//To Check if it is the last node
+	if (this->getMin()->getNext() == this->min && this->min->getChildren() == nullptr) {  // Only 1 node left
         this->min = nullptr;
         this->updateMin(nullptr);
         return 1;
@@ -171,33 +177,26 @@ int Heap::deleteMin() { // TODO
 
 	int minChildCount = 0;
 	
-	if(min->getChildren() != nullptr){
-		HeapNode* it = this->min->getChildren();
-		HeapNode* currentChild = it->getPrev();;
-		for(int d = this->min->getDegree(); d > 0; d--) {
-			cout << it->getValue() << endl;
-			//cout<<"loop 1\n";
-			it->setPrev(temp);
+	//Used to add children in main root heap
+	HeapNode* it = this->min->getChildren();
+	//Loop to add children in root list
+	if(this->min->getChildren() != nullptr){
+		do
+		{
 			temp->setNext(it);
-			it->setParent(nullptr);
+			it->setPrev(temp);
 			temp = it;
-			it = currentChild;
-			if(it != nullptr)
-				currentChild = it->getNext();
-		}
-		temp->setNext(this->min->getNext());
-		temp->getNext()->setPrev(temp);	
-	}
+			it = it->getNext();
+		}	while(it != this->min->getChildren());
 	
-	else{
-		temp->setNext(this->min->getNext());
-		temp->getNext()->setPrev(temp);
 	}
-	
+	temp->setNext(this->min->getNext());
+	temp->getNext()->setPrev(temp);
 	this->updateMin(temp);
+	
+	//Finding new Min value
 	int minVal = temp->getValue();
 	HeapNode* tempMin = temp;
-	
 	do {
 		
 		if (minVal > temp->getValue()) {
@@ -208,28 +207,23 @@ int Heap::deleteMin() { // TODO
 		temp = temp->getNext();
 		
 	} while(temp != min);
-
 	this->updateMin(tempMin);
 	
-	temp = this->min;
+	temp = temp->getNext();;
 	
 	do{
 		minChildCount++;
-		//cout<<"loop 2\n";
-		//cout<<temp->getValue()<<endl;
-		temp = temp->getNext();
-	}while(temp != this->min);
+		tempMin = tempMin->getNext();
+	}while(tempMin != this->min);
+	
+	minChildCount = 100;
 	
 	HeapNode* cons[minChildCount];
-	temp = this->min;
 
 	for (int i = 0; i < minChildCount; i++)
 	{
 		cons[i] = nullptr;
 	}
-	this->displayRoots();
-	//this->min->getPrev()->setNext(nullptr);
-	//this->min->setPrev(nullptr);
 	
     if (minChildCount != 0) {
     	do {
@@ -239,20 +233,21 @@ int Heap::deleteMin() { // TODO
 				break;
 			}
 			
-			cout<<"Inside Loop"<<endl;
-			cout<<"Current root node value: "<<temp->getValue()<<endl;
-			cout<<"Degree: "<<degree<<endl;
+			if(degree != 0)
+			{
+				it = temp->getChildren();
+				do
+				{
+					it = it->getNext();
+				}	while(it != temp->getChildren());
+			}
 			
     		if (cons[degree] == nullptr) {
-				cout<<"Inside IF"<<endl;
     			cons[degree] = temp;
     			temp = temp->getNext();
-				cout<<temp->getValue();
     		}
 			
     		else {
-				cout<<"Inside Else"<<endl;
-				
     			cons[degree]->getNext()->setPrev(cons[degree]->getPrev());
     			cons[degree]->getPrev()->setNext(cons[degree]->getNext());
 				cons[degree]->setNext(nullptr);
@@ -261,15 +256,12 @@ int Heap::deleteMin() { // TODO
 				//cout<<cons[degree]->getValue()<<endl;
 				
     			if (cons[degree]->getValue() >= temp->getValue()) {
-					
-					cout<<"Inside If 2"<<endl;
-    				
+					    				
     				temp->addChildren(cons[degree]);
 					cons[degree]->setParent(temp);
 					
     			}
     			else {
-					cout<<"Inside Else 2"<<endl;
     				cons[degree]->setNext(temp->getNext());
     				cons[degree]->setPrev(temp->getPrev());
 					temp->getNext()->setPrev(cons[degree]);
@@ -282,10 +274,35 @@ int Heap::deleteMin() { // TODO
     			}
     			cons[degree] = nullptr;
     		}
+			
 
     	} while(1);
 		//this->min->getPrev()->setNext(this->min);
     }
+	
+	temp = nullptr;
+	
+	for(int i=0; i<minChildCount; i++){
+		if(cons[i] != nullptr){
+			if(temp == nullptr)
+			{
+				temp = cons[i];
+				temp->setNext(temp);
+				temp->setPrev(temp);
+				tempMin = temp;
+			}
+			else{
+				temp->setNext(cons[i]);
+				cons[i]->setPrev(temp);
+				tempMin->setPrev(cons[i]);
+				cons[i]->setNext(tempMin);
+				temp = cons[i];
+			}
+		}
+	}
+	
+	
+	
 	return 0;
 }
 
