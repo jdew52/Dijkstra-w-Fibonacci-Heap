@@ -22,6 +22,8 @@ public:
 	void setPrev(HeapNode *newNode);
 	void setParent(HeapNode *newNode);
 	void setChildren(HeapNode *newNode);
+	void addChildren(HeapNode *newNode);
+	int getDegree();
 
 private:
     int id;      // id in graph
@@ -30,6 +32,7 @@ private:
     HeapNode *prev, *next; // List Pointers
     HeapNode *parent;
     HeapNode * children;
+	int deg;
 };
 
 
@@ -54,7 +57,7 @@ public:
 	int findMin();
 
 	// Delete the node with the minimum value and reorganize Fib Heap
-	void deleteMin();
+	int deleteMin();
 
     // Moves a node to the root list of the heap
     void moveToRoot(HeapNode *node);
