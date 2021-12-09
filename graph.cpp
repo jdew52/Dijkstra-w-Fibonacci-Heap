@@ -3,6 +3,7 @@
 #include <iterator>
 #include <vector>
 
+// Note: This value must be increased if graph size exceeds it
 const int inf = 10000000;
 
 // Constructor
@@ -65,8 +66,6 @@ void Graph::printGraph()
     }
 }
 
-
-
 HeapNode* Graph::getNode(int i) {
     return this->nodes[i];
 }
@@ -98,30 +97,48 @@ vector<Edge> Graph::getAdj(int u) {
     return this->adjacenyList[u];
 }
 
-// Note: Node 0 is ALWAYS assumed to be start node.
-void dijkstra(Graph* graph) {
+void Graph::printSpanningTree() {
+    HeapNode* temp = nullptr;
+
+    // Print distance values of all nodes
+    for (int i = 0; i < this->size; i++)
+    {
+        temp = this->getNode(i);
+        cout << i << ": D[" << temp->getValue() << "]" << endl;
+
+        // Cleanup memory.
+        delete temp;
+        temp = nullptr;
+    }
+}
+
+void dijkstra(Graph* graph, bool debugEnabled) {
     int edgeWeight = 0;
     HeapNode* v = nullptr;
 
+    // Note: Node 0 is ALWAYS assumed to be start node.
     Heap* pq = graph->initPQ(0);
-    // while (!pq->isEmpty()) {
-    //     // Extract and delete minimum
-    //     HeapNode* u = pq->extractMin();
-    //
-    //     // Iterate through all neighbors
-    //     vector<Edge> neighbors = graph->getAdj(u->getId());
-    //     for(vector<Edge>::iterator it = neighbors.begin();
-    //                                it != neighbors.end(); it++) {
-    //        edgeWeight = (*it).weight;
-    //        v = graph->getNode((*it).dst);
-    //
-    //        // Perform edge relaxation where necessary
-    //        if (u->getValue() + edgeWeight < v->getValue()) {
-    //            // Decrease key in PQ using heapnode reference
-    //            pq->decreaseKey(v, u->getValue() + edgeWeight);
-    //        }
-    //     }
-    //     // Cleanup memory.
-    //     delete u;
-    // }
+    while (!pq->isEmpty()) {
+        // Extract and delete minimum
+        HeapNode* u = pq->extractMin();
+
+        // Iterate through all neighbors
+        vector<Edge> neighbors = graph->getAdj(u->getId());
+        for(vector<Edge>::iterator it = neighbors.begin();
+                                   it != neighbors.end(); it++) {
+           edgeWeight = (*it).weight;
+           v = graph->getNode((*it).dst);
+
+           // Perform edge relaxation where necessary
+           if (u->getValue() + edgeWeight < v->getValue()) {
+               if (debugEnabled) {
+                   cout << "Decrease distance of " << v->getId() << ": D["
+                        << u->getValue() + edgeWeight << "]" << endl;
+               }
+
+               // Decrease key in PQ using heapnode reference
+               pq->decreaseKey(v, u->getValue() + edgeWeight);
+           }
+        }
+    }
 }
