@@ -112,7 +112,7 @@ void Graph::printSpanningTree() {
     }
 }
 
-void dijkstra(Graph* graph) {
+void dijkstra(Graph* graph, bool debugEnabled) {
     int edgeWeight = 0;
     HeapNode* v = nullptr;
 
@@ -131,7 +131,10 @@ void dijkstra(Graph* graph) {
 
            // Perform edge relaxation where necessary
            if (u->getValue() + edgeWeight < v->getValue()) {
-               // cout << "Decrease distance of " << v->getId() << ": D[" << u->getValue() + edgeWeight << "]" << endl;
+               if (debugEnabled) {
+                   cout << "Decrease distance of " << v->getId() << ": D["
+                        << u->getValue() + edgeWeight << "]" << endl;
+               }
 
                // Decrease key in PQ using heapnode reference
                pq->decreaseKey(v, u->getValue() + edgeWeight);

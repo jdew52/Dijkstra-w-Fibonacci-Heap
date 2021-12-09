@@ -55,6 +55,6 @@ private:
 
 
 // NOTE: This implementation assumes that the graph source is node 0
-void dijkstra(Graph* graph);
+void dijkstra(Graph* graph, bool debugEnabled);
 
 #endif // GRAPH_H

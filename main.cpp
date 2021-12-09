@@ -27,17 +27,23 @@
 */
 
 int main(int argc, char* argv[]) {
+    bool debugFlag = false;
+
     // Generate worst cast graph of size N
     if (argc < 2) {
         cout << "Please provide size of graph as command line argument" << endl;
     }
     else {
+        if (argc == 3 && atoi(argv[2]) == 1) {
+            debugFlag = true;
+        }
+
         // Generate worst cast graph of size N
         cout << "Creating graph of size " << argv[1] << "..." << endl;
         Graph G = Graph::generateWorstCaseGraph(atoi(argv[1]));
 
         // Print graph for verification
-        if (argc == 3 && atoi(argv[2]) == 1) {
+        if (debugFlag) {
             cout << "\nGenerated Graph:" << endl;
             G.printGraph();
         }
@@ -45,11 +51,11 @@ int main(int argc, char* argv[]) {
         cout << "---------------- Testing Dijkstra's ----------------" << endl;
 
         clock_t begin_t = clock();  // Start of vital block
-        dijkstra(&G);
+        dijkstra(&G, debugFlag);
         clock_t end_t = clock();    // End of vital block
 
         // Print Spanning tree for verification
-        if (argc == 3 && atoi(argv[2]) == 1) {
+        if (debugFlag) {
             cout << "\nMinimum Spanning Tree (MST):" << endl;
             G.printSpanningTree();
         }
