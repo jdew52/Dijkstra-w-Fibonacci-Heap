@@ -17,8 +17,8 @@
 #include "fibheap.h"
 #include "graph.h"
 #include <iostream>
+#include <chrono>
 #include <stdio.h> // Needed for command line args
-#include <time.h>
 
 /* Command line args
     - 1) Graph size: int specifying size of graph to generate
@@ -50,19 +50,18 @@ int main(int argc, char* argv[]) {
 
         cout << "---------------- Testing Dijkstra's ----------------" << endl;
 
-        clock_t begin_t = clock();  // Start of vital block
+        typedef std::chrono::high_resolution_clock Clock;
+        Clock::time_point begin_t = std::chrono::time_point_cast<std::chrono::nanoseconds>(Clock::now());
         dijkstra(&G, debugFlag);
-        clock_t end_t = clock();    // End of vital block
+        Clock::time_point end_t = std::chrono::time_point_cast<std::chrono::nanoseconds>(Clock::now());
 
         // Print Spanning tree for verification
         if (debugFlag) {
             cout << "\nMinimum Spanning Tree (MST):" << endl;
             G.printSpanningTree();
         }
-
         // Calculate time spent in seconds. (CLOCKS_PER_SEC = 1000000)
-        double time_spent = ((double)(end_t - begin_t)) / CLOCKS_PER_SEC;
-        cout << "\nruntime: " << time_spent << endl;
+        cout << "\nruntime: " << std::chrono::duration_cast<std::chrono::nanoseconds>(end_t - begin_t).count() << endl;
     }
 
 	return 0;
