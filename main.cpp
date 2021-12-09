@@ -1,56 +1,62 @@
+/******************************************************************************
+    * Authors:
+        - Drew Dunkelberger: ddunkelberge2018@my.fit.edu
+        - John Dewey:        jdewey2018@my.fit.edu
+        - Divyansh Gupta:    dgupta2019@my.fit.edu
+    * Date: 12/10/21
+    * Decription:
+        - Fibonacci heap implementation to investigate the time complexity as a
+        priority queue for Dijkstra's shortest path algorithm using a general
+        worst case graph.
+    * References:
+        - https://ir.canterbury.ac.nz/bitstream/handle/10092/13567/vickers_report_1986.pdf?sequence=1&isAllowed=y
+            Explains an algorithm for Dijkstra's worst case graph generation as
+            implemented by Graph::generateWorstCaseGraph(int n)
+******************************************************************************/
+
 #include "fibheap.h"
 #include "graph.h"
 #include <iostream>
 #include <stdio.h> // Needed for command line args
+#include <time.h>
+
+/* Command line args
+    - 1) Graph size: int specifying size of graph to generate
+    - 2) Debug flag (optional): int specifying whether to print graph and minimum
+        spanning tree. 1 for yes, else no
+*/
 
 int main(int argc, char* argv[]) {
-    cout << "---------------- Testing Merge Operation ----------------" << endl;
-    Heap* heap1 = Heap::generateHeap(5);
-    Heap* heap2 = Heap::generateHeap(5);
-    Heap* heap3 = Heap::generateHeap(3);
-
-    heap1->insert(new HeapNode(13, 1));
-
-
-    heap1->displayRoots();
-    heap2->displayRoots();
-    heap3->displayRoots();
-
-    // Merging heap 1 and 2
-    Heap* mergeHeap = Heap::merge(heap1, heap2);
-    mergeHeap->displayRoots();
-
-    // Merging new heap and heap 3
-    mergeHeap = Heap::merge(mergeHeap, heap3);
-    mergeHeap->displayRoots();
-
-    cout << "---------------- Testing deleteMin ----------------" << endl;
-    // Test deletion of all nodes
-
-	int a = 0;
-	int i = 0;
-    while(a == 0) {
-        cout << "Delete count " << i+1 << endl;
-        a = mergeHeap->deleteMin();;
-
-        if (mergeHeap->getMin() != nullptr) {
-            cout << "New min: " << mergeHeap->getMin()->getValue() << endl;
-        }
-        mergeHeap->displayRoots();
-		i++;
-    }
-    // TODO: Test deleteMin with heap that contains children
-
-    cout << "---------------- Testing Graph Generation ----------------" << endl;
     // Generate worst cast graph of size N
-    if (argc != 2) {
+    if (argc < 2) {
         cout << "Please provide size of graph as command line argument" << endl;
     }
     else {
         // Generate worst cast graph of size N
-        cout << "Creating graph of size " << argv[1] << ":" << endl;
+        cout << "Creating graph of size " << argv[1] << "..." << endl;
         Graph G = Graph::generateWorstCaseGraph(atoi(argv[1]));
-        G.printGraph();
+
+        // Print graph for verification
+        if (argc == 3 && atoi(argv[2]) == 1) {
+            cout << "\nGenerated Graph:" << endl;
+            G.printGraph();
+        }
+
+        cout << "---------------- Testing Dijkstra's ----------------" << endl;
+
+        clock_t begin_t = clock();  // Start of vital block
+        dijkstra(&G);
+        clock_t end_t = clock();    // End of vital block
+
+        // Print Spanning tree for verification
+        if (argc == 3 && atoi(argv[2]) == 1) {
+            cout << "\nMinimum Spanning Tree (MST):" << endl;
+            G.printSpanningTree();
+        }
+
+        // Calculate time spent in seconds. (CLOCKS_PER_SEC = 1000000)
+        double time_spent = ((double)(end_t - begin_t)) / CLOCKS_PER_SEC;
+        cout << "\nruntime: " << time_spent << endl;
     }
 
 	return 0;
