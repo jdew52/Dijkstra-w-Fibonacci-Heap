@@ -8,7 +8,7 @@
 
 // Constructor
 
-HeapNode::HeapNode(int newVal) {
+HeapNode::HeapNode(int id, int newVal) {
 	this->value = newVal;
 	this->marked = false;
 	this->prev = nullptr;
@@ -16,6 +16,7 @@ HeapNode::HeapNode(int newVal) {
 	this->parent = nullptr;
 	this->children = nullptr;
 	this->deg = 0;
+	this->id = id;
 }
 
 
