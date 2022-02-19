@@ -26,17 +26,34 @@ Using a Fibonacci heap as the priority queue for Dijkstra’s algorithm improves
 ### Method
 In order to analyze the fibonacci heap in practice, we needed a way to generate a large number of suitable graphs for dijkstra’s algorithm. Following the algorithm outlined by Alex Vickers in his study of priority queues, we implemented a method to generate the worst-case graphs for dijkstra’s algorithm. In the worst case, the number of decrease-key operations is maximized. This situation arises when there exists a shorter path to every unvisited node in the graph at each subsequent step of the algorithm. The algorithm assumes that the source node is always 1, following the steps below:
 
-![worst-case graph generation algorithm]()
+<p align="center">
+  <img 
+    src="./images/worst-case-graph-algo.png"
+    alt="worst-case graph generation algorithm"
+  >
+</p>
   
 The algorithm begins by connecting all the nodes linearly starting from node 1 with an edge of weight 1, which will later be recognized as the shortest path to each node. It then connects each node to all other nodes that are separated by at least one node and are greater in value. These connections are weighted in such a way that when visiting any node X in a graph of N nodes, there exists N-X shorter paths (decrease-key operations) to all following nodes. This is seen in the example below:
 
-![worst-case graph example with 5 nodes]()
+<p align="center">
+  <img 
+    src="./images/worst-case-graph-ex.png"
+    alt="worst-case graph example with 5 nodes"
+  >
+</p>
 
 ## Results
 
-![Runtime of Dijkstra’s Algorithm with Increasing Graph Sizes]()
-
-![Theoretical Runtime of Dijkstra’s Algorithm with Fibonacci Heap and Worst-Case Graph]()
+<p align="center">
+  <img 
+    src="./images/result-1.png"
+    alt="Runtime of Dijkstra’s Algorithm with Increasing Graph Sizes"
+  >
+  <img 
+    src="./images/result-2.png"
+    alt="Theoretical Runtime of Dijkstra’s Algorithm with Fibonacci Heap and Worst-Case Graph"
+  >
+</p>
 
 In our project, we tested input sizes ranging from 5 to 40,960 nodes on two separate machines. When gathering the runtime for some n number of nodes, we ran the program five times and took the average between them as our final value. 
 
